@@ -235,6 +235,20 @@ class CSSNode {
   /**
    * Get this node's align items, as defined by style.
    */
+  public function getAlignContent(): CSSAlign {
+    return style.alignContent;
+  }
+
+  public function setAlignContent(alignContent: CSSAlign) {
+    if (style.alignContent != alignContent) {
+      style.alignContent = alignContent;
+      dirty();
+    }
+  }
+
+  /**
+   * Get this node's align items, as defined by style.
+   */
   public function getAlignItems(): CSSAlign {
     return style.alignItems;
   }
