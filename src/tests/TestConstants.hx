@@ -22,5 +22,6 @@ class TestConstants {
   public static var SMALL_TEXT = "small";
   public static var LONG_TEXT = "loooooooooong with space";
   public static var MEASURE_WITH_RATIO_2 = "measureWithRatio2";
+  public static var MEASURE_WITH_MATCH_PARENT = "measureWithMatchParent";
   /** END_GENERATED **/
 }

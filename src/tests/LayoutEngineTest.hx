@@ -70,6 +70,8 @@ class LayoutEngineTest extends TestCase {
       } else {
         return [99999, 99999];
       }
+    } else if (testNode.context == TestConstants.MEASURE_WITH_MATCH_PARENT) {
+      return [width, height];
     } else {
       throw "Got unknown test: " + testNode.context;
     }
@@ -7946,6 +7948,73 @@ class LayoutEngineTest extends TestCase {
   }
 
   public function testCase183()
+  {
+    var root_node = new TestCSSNode();
+    {
+      var node_0 = root_node;
+      node_0.style.flexDirection = CSSFlexDirection.ROW;
+      node_0.style.alignItems = CSSAlign.FLEX_START;
+      node_0.style.dimensions[DIMENSION_WIDTH] = 100;
+      node_0.style.dimensions[DIMENSION_HEIGHT] = 10;
+      addChildren(node_0, 2);
+      {
+        var node_1;
+        node_1 = node_0.getChildAt(0);
+        node_1.style.dimensions[DIMENSION_WIDTH] = 50;
+        node_1.style.dimensions[DIMENSION_HEIGHT] = 10;
+        node_1 = node_0.getChildAt(1);
+        node_1.style.flexDirection = CSSFlexDirection.COLUMN;
+        node_1.style.alignItems = CSSAlign.FLEX_START;
+        node_1.style.flex = 1;
+        node_1.style.dimensions[DIMENSION_HEIGHT] = 10;
+        addChildren(node_1, 1);
+        {
+          var node_2;
+          node_2 = node_1.getChildAt(0);
+          node_2.style.flex = 1;
+          node_2.style.dimensions[DIMENSION_HEIGHT] = 10;
+          node_2.setMeasureFunction(sTestMeasureFunction);
+          node_2.context = "measureWithMatchParent";
+        }
+      }
+    }
+
+    var root_layout = new TestCSSNode();
+    {
+      var node_0 = root_layout;
+      node_0.layout.position[POSITION_TOP] = 0;
+      node_0.layout.position[POSITION_LEFT] = 0;
+      node_0.layout.dimensions[DIMENSION_WIDTH] = 100;
+      node_0.layout.dimensions[DIMENSION_HEIGHT] = 10;
+      addChildren(node_0, 2);
+      {
+        var node_1;
+        node_1 = node_0.getChildAt(0);
+        node_1.layout.position[POSITION_TOP] = 0;
+        node_1.layout.position[POSITION_LEFT] = 0;
+        node_1.layout.dimensions[DIMENSION_WIDTH] = 50;
+        node_1.layout.dimensions[DIMENSION_HEIGHT] = 10;
+        node_1 = node_0.getChildAt(1);
+        node_1.layout.position[POSITION_TOP] = 0;
+        node_1.layout.position[POSITION_LEFT] = 50;
+        node_1.layout.dimensions[DIMENSION_WIDTH] = 50;
+        node_1.layout.dimensions[DIMENSION_HEIGHT] = 10;
+        addChildren(node_1, 1);
+        {
+          var node_2;
+          node_2 = node_1.getChildAt(0);
+          node_2.layout.position[POSITION_TOP] = 0;
+          node_2.layout.position[POSITION_LEFT] = 0;
+          node_2.layout.dimensions[DIMENSION_WIDTH] = 50;
+          node_2.layout.dimensions[DIMENSION_HEIGHT] = 10;
+        }
+      }
+    }
+
+    performTest("should correctly progagate size contraints from flexible parents", root_node, root_layout);
+  }
+
+  public function testCase184()
   {
     var root_node = new TestCSSNode();
     {

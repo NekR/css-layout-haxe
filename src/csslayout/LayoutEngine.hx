@@ -254,7 +254,7 @@ class LayoutEngine {
     var paddingAndBorderAxisColumn: Float = ((node.style.padding.getWithFallback(leadingSpacing[CSS_FLEX_DIRECTION_COLUMN], leading[CSS_FLEX_DIRECTION_COLUMN]) + node.style.border.getWithFallback(leadingSpacing[CSS_FLEX_DIRECTION_COLUMN], leading[CSS_FLEX_DIRECTION_COLUMN])) + (node.style.padding.getWithFallback(trailingSpacing[CSS_FLEX_DIRECTION_COLUMN], trailing[CSS_FLEX_DIRECTION_COLUMN]) + node.style.border.getWithFallback(trailingSpacing[CSS_FLEX_DIRECTION_COLUMN], trailing[CSS_FLEX_DIRECTION_COLUMN])));
 
     if (isMeasureDefined(node)) {
-      var isResolvedRowDimDefined = !Math.isNaN(node.layout.dimensions[dim[resolvedRowAxis]]);
+      var isResolvedRowDimDefined = (!Math.isNaN(node.layout.dimensions[dim[resolvedRowAxis]]) && node.layout.dimensions[dim[resolvedRowAxis]] >= 0.0);
 
       var width = CSSConstants.UNDEFINED;
       if ((!Math.isNaN(node.style.dimensions[dim[resolvedRowAxis]]) && node.style.dimensions[dim[resolvedRowAxis]] >= 0.0)) {
@@ -270,7 +270,7 @@ class LayoutEngine {
       var height = CSSConstants.UNDEFINED;
       if ((!Math.isNaN(node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
         height = node.style.dimensions[DIMENSION_HEIGHT];
-      } else if (!Math.isNaN(node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]])) {
+      } else if ((!Math.isNaN(node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
         height = node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]];
       } else {
         height = parentMaxHeight -
@@ -313,8 +313,8 @@ class LayoutEngine {
     var paddingAndBorderAxisMain: Float = ((node.style.padding.getWithFallback(leadingSpacing[mainAxis], leading[mainAxis]) + node.style.border.getWithFallback(leadingSpacing[mainAxis], leading[mainAxis])) + (node.style.padding.getWithFallback(trailingSpacing[mainAxis], trailing[mainAxis]) + node.style.border.getWithFallback(trailingSpacing[mainAxis], trailing[mainAxis])));
     var paddingAndBorderAxisCross: Float = ((node.style.padding.getWithFallback(leadingSpacing[crossAxis], leading[crossAxis]) + node.style.border.getWithFallback(leadingSpacing[crossAxis], leading[crossAxis])) + (node.style.padding.getWithFallback(trailingSpacing[crossAxis], trailing[crossAxis]) + node.style.border.getWithFallback(trailingSpacing[crossAxis], trailing[crossAxis])));
 
-    var isMainDimDefined = !Math.isNaN(node.layout.dimensions[dim[mainAxis]]);
-    var isCrossDimDefined = !Math.isNaN(node.layout.dimensions[dim[crossAxis]]);
+    var isMainDimDefined = (!Math.isNaN(node.layout.dimensions[dim[mainAxis]]) && node.layout.dimensions[dim[mainAxis]] >= 0.0);
+    var isCrossDimDefined = (!Math.isNaN(node.layout.dimensions[dim[crossAxis]]) && node.layout.dimensions[dim[crossAxis]] >= 0.0);
     var isMainRowDirection = (mainAxis == CSS_FLEX_DIRECTION_ROW || mainAxis == CSS_FLEX_DIRECTION_ROW_REVERSE);
 
     var child: Null<CSSNode> = null;
@@ -420,7 +420,7 @@ class LayoutEngine {
           // left and right or top and bottom).
           for (ii in 0...2) {
             axis = (ii != 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
-            if (!Math.isNaN(node.layout.dimensions[dim[axis]]) &&
+            if ((!Math.isNaN(node.layout.dimensions[dim[axis]]) && node.layout.dimensions[dim[axis]] >= 0.0) &&
                 !(!Math.isNaN(child.style.dimensions[dim[axis]]) && child.style.dimensions[dim[axis]] >= 0.0) &&
                 !Math.isNaN(child.style.position[leading[axis]]) &&
                 !Math.isNaN(child.style.position[trailing[axis]])) {
@@ -467,7 +467,7 @@ class LayoutEngine {
           maxHeight = CSSConstants.UNDEFINED;
 
           if (!isMainRowDirection) {
-            if ((!Math.isNaN(node.style.dimensions[dim[resolvedRowAxis]]) && node.style.dimensions[dim[resolvedRowAxis]] >= 0.0)) {
+            if ((!Math.isNaN(node.layout.dimensions[dim[resolvedRowAxis]]) && node.layout.dimensions[dim[resolvedRowAxis]] >= 0.0)) {
               maxWidth = node.layout.dimensions[dim[resolvedRowAxis]] -
                 paddingAndBorderAxisResolvedRow;
             } else {
@@ -476,7 +476,7 @@ class LayoutEngine {
                 paddingAndBorderAxisResolvedRow;
             }
           } else {
-            if ((!Math.isNaN(node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
+            if ((!Math.isNaN(node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
               maxHeight = node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] -
                   paddingAndBorderAxisColumn;
             } else {
@@ -533,7 +533,7 @@ class LayoutEngine {
           isSimpleStackCross && (
             child.style.positionType != CSSPositionType.RELATIVE ||
             (alignItem != CSSAlign.STRETCH && alignItem != CSSAlign.FLEX_START) ||
-            Math.isNaN(child.layout.dimensions[dim[crossAxis]])
+            !(!Math.isNaN(child.layout.dimensions[dim[crossAxis]]) && child.layout.dimensions[dim[crossAxis]] >= 0.0)
           )
         ) {
           isSimpleStackCross = false;
@@ -620,7 +620,7 @@ class LayoutEngine {
           );
 
           maxWidth = CSSConstants.UNDEFINED;
-          if ((!Math.isNaN(node.style.dimensions[dim[resolvedRowAxis]]) && node.style.dimensions[dim[resolvedRowAxis]] >= 0.0)) {
+          if ((!Math.isNaN(node.layout.dimensions[dim[resolvedRowAxis]]) && node.layout.dimensions[dim[resolvedRowAxis]] >= 0.0)) {
             maxWidth = node.layout.dimensions[dim[resolvedRowAxis]] -
               paddingAndBorderAxisResolvedRow;
           } else if (!isMainRowDirection) {
@@ -629,7 +629,7 @@ class LayoutEngine {
               paddingAndBorderAxisResolvedRow;
           }
           maxHeight = CSSConstants.UNDEFINED;
-          if ((!Math.isNaN(node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.style.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
+          if ((!Math.isNaN(node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]]) && node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] >= 0.0)) {
             maxHeight = node.layout.dimensions[dim[CSS_FLEX_DIRECTION_COLUMN]] -
               paddingAndBorderAxisColumn;
           } else if (isMainRowDirection) {
@@ -749,7 +749,7 @@ class LayoutEngine {
             if (alignItem == CSSAlign.STRETCH) {
               // You can only stretch if the dimension has not already been set
               // previously.
-              if (Math.isNaN(child.layout.dimensions[dim[crossAxis]])) {
+              if (!(!Math.isNaN(child.layout.dimensions[dim[crossAxis]]) && child.layout.dimensions[dim[crossAxis]] >= 0.0)) {
                 child.layout.dimensions[dim[crossAxis]] = Math.max(
                   boundAxis(child, crossAxis, containerCrossAxis -
                     paddingAndBorderAxisCross - (child.style.margin.getWithFallback(leadingSpacing[crossAxis], leading[crossAxis]) + child.style.margin.getWithFallback(trailingSpacing[crossAxis], trailing[crossAxis]))),
@@ -835,7 +835,7 @@ class LayoutEngine {
           if (child.lineIndex != i) {
             break;
           }
-          if (!Math.isNaN(child.layout.dimensions[dim[crossAxis]])) {
+          if ((!Math.isNaN(child.layout.dimensions[dim[crossAxis]]) && child.layout.dimensions[dim[crossAxis]] >= 0.0)) {
             lineHeight = Math.max(
               lineHeight,
               child.layout.dimensions[dim[crossAxis]] + (child.style.margin.getWithFallback(leadingSpacing[crossAxis], leading[crossAxis]) + child.style.margin.getWithFallback(trailingSpacing[crossAxis], trailing[crossAxis]))
@@ -931,7 +931,7 @@ class LayoutEngine {
       for (ii in 0...2) {
         axis = (ii != 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
 
-        if (!Math.isNaN(node.layout.dimensions[dim[axis]]) &&
+        if ((!Math.isNaN(node.layout.dimensions[dim[axis]]) && node.layout.dimensions[dim[axis]] >= 0.0) &&
             !(!Math.isNaN(currentAbsoluteChild.style.dimensions[dim[axis]]) && currentAbsoluteChild.style.dimensions[dim[axis]] >= 0.0) &&
             !Math.isNaN(currentAbsoluteChild.style.position[leading[axis]]) &&
             !Math.isNaN(currentAbsoluteChild.style.position[trailing[axis]])) {
